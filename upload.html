@@ -100,7 +100,8 @@
               </div>
             </div>
             <div>
-              <button class="get_my_location">Get My Location</button>
+              <button id="get_my_location">Get My Location</button>
+
             </div>
             <button class="btn" type="submit">Submit Report</button>
           </form>
@@ -115,6 +116,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       // Fallback: Directly initialize the map for testing
@@ -124,6 +126,7 @@
           maxZoom: 19,
           attribution: '© OpenStreetMap'
         }).addTo(map);
+
         var marker;
         map.on('click', function (e) {
           if (marker) marker.remove();
@@ -132,23 +135,34 @@
           document.getElementById('lng').value = e.latlng.lng.toFixed(6);
         });
       }
+
+      // ✅ Geolocation button fix
+      const button = document.getElementById('get_my_location');
+      // using class selector
+      if (button) {
+        button.addEventListener('click', (e) => {
+          e.preventDefault(); // stop form submit
+
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+          } else {
+            alert("Geolocation is not supported by your browser");
+          }
+        });
+      }
+
+      function showPosition(position) {
+        document.getElementById("lat").value = position.coords.latitude.toFixed(6);
+        document.getElementById("lng").value = position.coords.longitude.toFixed(6);
+        alert("Location fetched successfully!");
+      }
+
+      function showError(error) {
+        alert("Failed to get location: " + error.message);
+      }
     });
-
-    const button = document.getElementById('get_my_location');
-
-    function getMyLocation() {
-      console.log(getMyLocation(position));
-    }
-    function failedtoget() {
-      console.log("There was some error getting your location");
-    }
-    button.addEventListener('click', async () => {
-      navigator.getMyLocation.getCurrentPosition(getMyLocation, failedtoget);
-    });
-
-
-
   </script>
+
 
 
   <footer>
